@@ -1,4 +1,11 @@
 <?php
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation [$item, $itemSet, or $media]
+ * @var array $options
  */
+
+// By default, this template render nothing: it allows to use the fallback, that
+// is the template of the resource, for example "omeka/site/item/show".
