@@ -1,3 +1,6 @@
 /**
- * Note: Common fonts are available in vendor/dompdf/dompdf/lib/fonts
+ * There can be only one folder of fonts (subdirectories are allowed), so you
+ * may need to copy them in your own directory and pass the options "fontDir"/"fontCache"
+ * to the pdf creator. This is only needed when not-standard fonts are used.
+ * Common default fonts are available in vendor/dompdf/dompdf/lib/fonts.
  */

@@ -45,6 +45,8 @@ class PdfCreator extends AbstractHelper
 
         $defaultOptions = [
             'defaultPaperSize' => 'a4',
+            // Required, because css, images, etc. are all served by the server.
+            'isRemoteEnabled' => true,
             'pdfBackend' => 'auto',
             'tempDir' => $resource->getServiceLocator()->get('Config')['temp_dir'],
         ];

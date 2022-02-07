@@ -4,10 +4,16 @@
  * @var \Omeka\Api\Representation\SiteRepresentation $site
  * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
  * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation [$item, $itemSet, or $media]
+ * @var string $template
  *
  * Any option can be passed to the template.
  * @link https://github.com/dompdf/dompdf
  * @link https://github.com/dompdf/dompdf/blob/HEAD/src/Options.php#L307-L359.
+ *
+ * There can be only one folder of fonts (subdirectories are allowed), so you
+ * may need to copy them in your own directory and pass the options "fontDir"/"fontCache"
+ * to the pdf creator. This is only needed when not-standard fonts are used.
+ * Common default fonts are available in vendor/dompdf/dompdf/lib/fonts.
  */
 
-$this->pdfCreator($resource, 'default', []);
+$this->pdfCreator($resource, $template, []);
