@@ -5,8 +5,11 @@ Pdf Creator (module for Omeka S)
 > are available on [GitLab], which seems to respect users and privacy better
 > than the previous repository.__
 
-[Pdf Creator] is a module for [Omeka S] that allows to create a pdf for a
-resource from an html template.
+[Pdf Creator] is a module for [Omeka S] that allows to create dynamically a pdf
+for a resource from an html template.
+
+The pdf engine is a pure php one [DomPdf], so you don't need any dependency on
+the server. It supports css 2.1 and some common css 3 features.
 
 
 Installation
@@ -39,18 +42,38 @@ See general end user documentation for [Installing a module].
 Usage
 -----
 
-Add the following code somewhere into your theme:
+
+Add the following code somewhere into your theme to get the url of the pdf:
 
 ```php
-$pdfUrl = $this->pdfCreator($resource, $template, $options);
-echo $this->hyperlink('Pdf', $url);
+echo $this->hyperlink('PDF', $this->url('site/pdf-creator', ['id' => $resource->id()], true));
 ```
 
-The template is a phtml file from the theme. The default is "common/template/default.phtml".
-The options are an array passed to the template if needed.
+To pass a specific template, add it to the query:
 
-The pdf engine is a pure php one [DomPdf], so you don't need any dependency on
-the server. It supports css 2.1 and some common css 3 features.
+```php
+echo $this->hyperlink('PDF', $this->url('site/pdf-creator', ['id' => $resource->id()], ['query' => ['template' => 'record']], true));
+```
+
+The url is something like "https://example.org/s/my-site/pdf/1", where the last
+part is the resource id. If you use BulkExport, the url is the resource one,
+plus ".pdf", as it was a real file.
+
+The template is a phtml file from the theme. The default is "common/template/default.phtml"
+or it shortcut "default". When the template returns nothing, like the default
+template, the template of the resource in the current theme (for example "omeka/site/item/show")
+is used as a fallback.
+
+To modify the options, add them to the template "view/pdf-creator/output/show".
+The options are passed to DomPdf and to the template. See all available options
+of DomPdf in [its documentation]. You can find examples and tools to debug
+a template online [here].
+
+
+TODO
+----
+
+- [ ] Make a Bulk Export output (included route).
 
 
 Warning
@@ -99,7 +122,7 @@ conditions as regards security.
 The fact that you are presently reading this means that you have had knowledge
 of the CeCILL license and that you accept its terms.
 
-### libraries
+### Libraries
 
 - DomPdf: LGPL-2.1 License
 
@@ -114,8 +137,11 @@ See included libraries for copyright of dependencies.
 
 [Pdf Creator]: https://gitlab.com/Daniel-KM/Omeka-S-module-PdfCreator
 [Omeka S]: https://omeka.org/s
+[DomPdf]: https://github.com/dompdf/dompdf
 [Installing a module]: https://omeka.org/s/docs/user-manual/modules/
 [Generic]: https://gitlab.com/Daniel-KM/Omeka-S-module-Generic
+[its documentation]: https://github.com/dompdf/dompdf
+[here]: https://eclecticgeek.com/dompdf/debug.php
 [module issues]: https://gitlab.com/Daniel-KM/Omeka-S-module-PdfCreator/issues
 [CeCILL v2.1]: https://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
 [GNU/GPL]: https://www.gnu.org/licenses/gpl-3.0.html
