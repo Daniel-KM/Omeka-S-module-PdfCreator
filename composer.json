@@ -1,0 +1,32 @@
+{
+    "name": "daniel-km/omeka-s-module-pdf-creator",
+    "type": "library",
+    "description": "Create a pdf for a resource from an html template.",
+    "license": "CECILL-2.1",
+    "authors": [
+        {
+            "name": "Daniel Berthereau",
+            "email": "Daniel.packagist@Berthereau.net"
+        }
+    ],
+    "homepage": "https://gitlab.com/Daniel-KM/Omeka-S-module-PdfCreator",
+    "support": {
+        "issues": "https://gitlab.com/Daniel-KM/Omeka-S-module-PdfCreator/-/issues",
+        "forum": "https://forum.omeka.org/"
+    },
+    "keywords": [
+        "Omeka S",
+        "module",
+        "pdf",
+        "publication"
+    ],
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true,
+            "oomphinc/composer-installers-extender": true
+        }
+    },
+    "require": {
+        "dompdf/dompdf": "^1.2"
+    }
+}
