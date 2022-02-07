@@ -5,9 +5,19 @@
  * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
  * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation [$item, $itemSet, or $media]
  * @var array $options
+ *
+ * Any option can be passed to the template.
+ *
+ * Documention:
+ * @link https://github.com/dompdf/dompdf
+ * Examples and tools to debug a template online:
+ * @link https://eclecticgeek.com/dompdf/debug.php.
+ *
+ * There can be only one folder of fonts (subdirectories are allowed), so you
+ * may need to copy them in your own directory and pass the options "fontDir"/"fontCache"
+ * to the pdf creator.
+ * Common default fonts are available in vendor/dompdf/dompdf/lib/fonts.
  */
 
 // By default, this template render nothing: it allows to use the fallback, that
 // is the template of the resource, for example "omeka/site/item/show".
-
-// You can debug a template here: https://eclecticgeek.com/dompdf/debug.php.

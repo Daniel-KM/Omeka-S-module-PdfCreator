@@ -1,0 +1,120 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation [$item, $itemSet, or $media]
+ * @var array $options
+ *
+ * Any option can be passed to the template.
+ *
+ * Documention:
+ * @link https://github.com/dompdf/dompdf
+ * Examples and tools to debug a template online:
+ * @link https://eclecticgeek.com/dompdf/debug.php.
+ *
+ * There can be only one folder of fonts (subdirectories are allowed), so you
+ * may need to copy them in your own directory and pass the options "fontDir"/"fontCache"
+ * to the pdf creator.
+ * Common default fonts are available in vendor/dompdf/dompdf/lib/fonts.
+ */
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$assetUrl = $plugins->get('assetUrl');
+$translate = $plugins->get('translate');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+
+// All urls should be absolute.
+$baseUrl = $this->serverUrl();
+
+$siteTitle = $site->title();
+$this->htmlElement('html')->setAttribute('lang', $this->lang());
+$this->headMeta()
+    ->setCharset('UTF-8')
+    ->appendName('viewport', 'width=device-width, initial-scale=1');
+$this
+    ->headTitle($siteTitle)->setSeparator(' · ')
+    ->append($this->setting('installation_title', 'Omeka S'));
+$this->headLink()
+    ->prependStylesheet($baseUrl . $assetUrl('css/pdf.css', 'PdfCreator', true));
+
+$this->htmlElement('body')->appendAttribute('class', 'resource show');
+
+?>
+<?= $this->doctype() ?>
+<?= $this->htmlElement('html') ?>
+    <head>
+        <?= $this->headMeta() ?>
+        <?= $this->headTitle() ?>
+        <?= $this->headLink() ?>
+        <?= $this->headStyle() ?>
+    </head>
+    <?= $this->htmlElement('body') ?>
+    <body>
+        <?php // The header and footer are css fixed and should be first to be on all pages. See documentation. ?>
+        <?php $url = $site->thumbnailDisplayUrl('original'); ?>
+        <header id="header" class="<?= $url ? 'site-image' : 'site-title' ?>">
+            <?php if ($url): ?>
+            <img src="<?= $baseUrl . $url ?>" alt="" />
+            <?php else: ?>
+            <div>
+                <?= $site->link($site->title()) ?>
+            </div>
+            <?php endif; ?>
+        </header>
+        <footer id="footer">
+            <span><?= $escape($this->setting('installation_title', 'Omeka S')) ?></span>
+            <span class="page-number"></span>
+        </footer>
+
+        <main>
+            <h1><?= $resource->displayTitle() ?></h1>
+            <?php if ($resource->resourceClass()): ?>
+            <div>
+                <h2><?= $translate('Resource class') ?>:</h2>
+                <div class="value-content"><?= $resource->displayResourceClassLabel() ?></div>
+            </div>
+            <?php endif; ?>
+            <?php if (method_exists($resource, 'itemSets') && $itemSets = $resource->itemSets()): ?>
+            <div>
+                <h2><?= $translate('Item sets') ?></h2>
+                <?php foreach ($itemSets as $itemSet): ?>
+                <div class="value"><?= $itemSet->displayTitle() ?></div>
+                <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
+            <?= $resource->displayValues(['viewName' => 'common/resource-values']) ?>
+
+            <?php
+            $resourceName = $resource->getControllerName();
+            $medias = $resourceName === 'item' ? $resource->media() : ($resourceName === 'media' ? [$resource] : []);
+            foreach ($medias as $media): ?>
+                <?php $renderer = $media->renderer(); ?>
+                <?php $mediaType = $media->mediaType(); ?>
+                <div class="value">
+                <?php if ($renderer === 'html' || substr($mediaType, 0, 5) === 'image'): ?>
+                <?= $media->render() ?>
+                <?php else: ?>
+                <?= $media->link($media->displayTitle()) ?>
+                <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+
+            <?php // Resource citation ?>
+            <div class="citation">
+                <h3><?= $translate('To quote this record') ?> • <?= date('d/m/Y') ?></h3>
+                <div class="value">
+                    <?php $vals = [];
+                    if ($value = $resource->value('dcterms:creator')) $vals[] = $value->asHtml();
+                    $vals[] = '« ' . $escape($resource->displayTitle()) . ' »';
+                    if ($value = ($resource->value('dcterms:issued') ?: $resource->value('dcterms:date'))) $vals[] = $value->asHtml();
+                    $vals[] = $escape($site->title());
+                    ?>
+                    <?= implode(', ', array_map('trim', $vals)) ?>
+                    <a class="citation-link" href="<?= $escapeAttr($value = $resource->url($site, true)) ?>"><?= $escape($value) ?></a>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>
