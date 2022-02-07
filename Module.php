@@ -9,6 +9,7 @@ if (!class_exists(\Generic\AbstractModule::class)) {
 }
 
 use Generic\AbstractModule;
+use Laminas\Mvc\MvcEvent;
 
 /**
  * Pdf Creator
@@ -19,6 +20,26 @@ use Generic\AbstractModule;
 class Module extends AbstractModule
 {
     const NAMESPACE = __NAMESPACE__;
+
+    public function onBootstrap(MvcEvent $event): void
+    {
+        parent::onBootstrap($event);
+
+        /**
+         * @var \Omeka\Permissions\Acl $acl
+         * @see \Omeka\Service\AclFactory
+         */
+        $services = $this->getServiceLocator();
+        $acl = $services->get('Omeka\Acl');
+
+        $acl
+            // Anybody can read stream output.
+            ->allow(
+                null,
+                ['PdfCreator\Controller\Output'],
+                ['show']
+            );
+    }
 
     protected function preInstall(): void
     {

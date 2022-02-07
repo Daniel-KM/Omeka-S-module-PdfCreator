@@ -13,6 +13,34 @@ return [
             'pdfCreator' => View\Helper\PdfCreator::class,
         ],
     ],
+    'controllers' => [
+        'invokables' => [
+            'PdfCreator\Controller\Output' => Controller\OutputController::class,
+        ],
+    ],
+    'router' => [
+        'routes' => [
+            'site' => [
+                'child_routes' => [
+                    // This route is used when BulkExport is not available.
+                    'pdf-creator' => [
+                        'type' => \Laminas\Router\Http\Segment::class,
+                        'options' => [
+                            'route' => '/pdf/:id',
+                            'constraints' => [
+                                'id' => '\d+',
+                            ],
+                            'defaults' => [
+                                '__NAMESPACE__' => 'PdfCreator\Controller',
+                                'controller' => 'Output',
+                                'action' => 'show',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
     // Keep empty config for automatic management.
     'pdfcreator' => [
     ],
