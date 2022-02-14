@@ -96,6 +96,27 @@ class PdfCreator extends AbstractHelper
             ]);
         }
 
+        // Fix relative links to application assets, mainly fallback thumbnails.
+        $baseUrl = $view->serverUrl($view->basePath());
+        $applicationAsset = $baseUrl . '/application/asset/';
+        $modules = $baseUrl . '/modules/';
+        $themes = $baseUrl . '/themes/';
+        $replace = [
+            '"/application/asset/' => '"' . $applicationAsset,
+            "'/application/asset/" => "'" . $applicationAsset,
+            '"&#x2F;application&#x2F;asset&#x2F;' => '"' . $applicationAsset,
+            "'&#x2F;application&#x2F;asset&#x2F;" => "'" . $applicationAsset,
+            '"/modules/' => '"' . $modules,
+            "'/modules/" => "'" . $modules,
+            '"&#x2F;modules&#x2F;' => '"' . $modules,
+            "'&#x2F;modules&#x2F;" => "'" . $modules,
+            '"/themes/' => '"' . $themes,
+            "'/themes/" => "'" . $themes,
+            '"&#x2F;themes&#x2F;' => '"' . $themes,
+            "'&#x2F;themes&#x2F;" => "'" . $themes,
+        ];
+        $html = str_replace(array_keys($replace), array_values($replace), $html);
+
         $isNextCall = true;
 
         $dompdf = new Dompdf($options);
