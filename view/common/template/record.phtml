@@ -71,37 +71,73 @@ $this->htmlElement('body')->appendAttribute('class', 'resource show');
         </footer>
 
         <main>
+
             <h1><?= $resource->displayTitle() ?></h1>
+
             <?php if ($resource->resourceClass()): ?>
             <div>
                 <h2><?= $translate('Resource class') ?>:</h2>
                 <div class="value-content"><?= $resource->displayResourceClassLabel() ?></div>
             </div>
             <?php endif; ?>
+
             <?php if (method_exists($resource, 'itemSets') && $itemSets = $resource->itemSets()): ?>
             <div>
                 <h2><?= $translate('Item sets') ?></h2>
-                <?php foreach ($itemSets as $itemSet): ?>
-                <div class="value"><?= $itemSet->displayTitle() ?></div>
-                <?php endforeach; ?>
+                <div class="values">
+                    <?php foreach ($itemSets as $itemSet): ?>
+                    <div class="value"><?= $itemSet->displayTitle() ?></div>
+                    <?php endforeach; ?>
+                </div>
             </div>
             <?php endif; ?>
+
             <?= $resource->displayValues(['viewName' => 'common/resource-values']) ?>
 
             <?php
             $resourceName = $resource->getControllerName();
-            $medias = $resourceName === 'item' ? $resource->media() : ($resourceName === 'media' ? [$resource] : []);
-            foreach ($medias as $media): ?>
-                <?php $renderer = $media->renderer(); ?>
-                <?php $mediaType = $media->mediaType(); ?>
-                <div class="value">
-                <?php if ($renderer === 'html' || substr($mediaType, 0, 5) === 'image'): ?>
-                <?= $media->render() ?>
-                <?php else: ?>
-                <?= $media->link($media->displayTitle()) ?>
-                <?php endif; ?>
+            if ($resourceName === 'item'):
+                $medias = $resource->media();
+                if (count($medias)):
+            ?>
+            <div>
+                <h2><?= $translate('Medias') ?></h2>
+                <div class="values">
+                    <?php foreach ($medias as $media):
+                        $renderer = $media->renderer(); ?>
+                    <div class="value">
+                        <?php if ($renderer === 'html'): ?>
+                        <?= $media->render() ?>
+                        <?php else: ?>
+                        <?= $media->linkPretty() ?>
+                        <?php endif; ?>
+                    </div>
+                    <?php endforeach; ?>
                 </div>
-            <?php endforeach; ?>
+            </div>
+                <?php endif; ?>
+            <?php elseif ($resourceName === 'media'): ?>
+            <div>
+                <?php
+                $renderer = $media->renderer();
+                $mediaType = $media->mediaType();
+                ?>
+                <div class="values">
+                    <div class="value">
+                        <?php if ($renderer === 'html'): ?>
+                        <?= $media->render() ?>
+                        <?php elseif ($renderer === 'iiif'): ?>
+                        <img class="fullsize" src="<?= $media->thumbnailUrl('large') ?>"/>
+                        <?php elseif (substr($mediaType, 0, 5) === 'image'): ?>
+                        <?php // To avoid to use a viewer from a module, use html img. ?>
+                        <img class="fullsize" src="<?= $media->originalUrl() ?: $media->thumbnailUrl('large') ?>"/>
+                        <?php else: ?>
+                        <?= $media->linkPretty() ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
 
             <?php // Resource citation ?>
             <div class="citation">
@@ -117,6 +153,7 @@ $this->htmlElement('body')->appendAttribute('class', 'resource show');
                     <a class="citation-link" href="<?= $escapeAttr($value = $resource->url($site, true)) ?>"><?= $escape($value) ?></a>
                 </div>
             </div>
+
         </main>
     </body>
 </html>
