@@ -34,8 +34,10 @@ $this->headMeta()
     ->setCharset('UTF-8')
     ->appendName('viewport', 'width=device-width, initial-scale=1');
 $this
-    ->headTitle($siteTitle)->setSeparator(' · ')
-    ->append($this->setting('installation_title', 'Omeka S'));
+    ->headTitle($resource->displayTitle())->setSeparator(' · ')
+    ->append($siteTitle)
+    ->append($this->setting('installation_title', 'Omeka S'))
+;
 $this->headLink()
     ->prependStylesheet($baseUrl . $assetUrl('css/pdf.css', 'PdfCreator', true));
 

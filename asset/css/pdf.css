@@ -7,6 +7,11 @@
 
 @charset "UTF-8";
 
+/* Designed for format A4: margin + max-width = 21 cm. */
+@page {
+    margin: 2cm;
+}
+
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -26,11 +31,6 @@ time, mark, audio, video {
     /* Default size. */
     font-size: 16px;
     vertical-align: baseline;
-}
-
-/* Designed for format A4: margin + max-width body = 21 cm. */
-@page {
-    margin: 2cm;
 }
 
 body {
@@ -102,6 +102,7 @@ header {
 header.site-image {
     background-color: #393939;
 }
+
 header.site-title {
     padding-top: 1cm;
 }
