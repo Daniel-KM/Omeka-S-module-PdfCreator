@@ -28,5 +28,15 @@
     },
     "require": {
         "dompdf/dompdf": "^1.2"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "# Fix https://github.com/dompdf/dompdf/pull/2772",
+            "@php -r '$f = __DIR__ . \"/vendor/dompdf/dompdf/src/FrameReflower/Inline.php\"; file_put_contents($f, str_replace(\"[\\$x, \\$y] = \\$frame->get_first_child()->get_position();\", \"\\$firstChild = \\$frame->get_first_child();\n        [\\$x, \\$y] = \\$firstChild ? \\$firstChild->get_position() : [0, 0];\", file_get_contents($f)));'"
+        ],
+        "post-update-cmd": [
+            "# Fix https://github.com/dompdf/dompdf/pull/2772",
+            "@php -r '$f = __DIR__ . \"/vendor/dompdf/dompdf/src/FrameReflower/Inline.php\"; file_put_contents($f, str_replace(\"[\\$x, \\$y] = \\$frame->get_first_child()->get_position();\", \"\\$firstChild = \\$frame->get_first_child();\n        [\\$x, \\$y] = \\$firstChild ? \\$firstChild->get_position() : [0, 0];\", file_get_contents($f)));'"
+        ]
     }
 }
