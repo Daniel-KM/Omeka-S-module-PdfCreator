@@ -33,9 +33,11 @@ class PdfCreator extends AbstractHelper
      *   is used as a fallback.
      * @var array $options Options passed to Dompdf and to the template.
      *   See all available options here in the documentation of DomPdf.
-     * @return string|Dompdf
+     *   A specific option for the module is "skipFallback", false by default.
+     * @return string The helper will exit the pdf content automatically, else
+     *   it outputs an empty string.
      */
-    public function __invoke(AbstractResourceEntityRepresentation $resource, ?string $template = null, array $options = [], bool $isFirst = false)
+    public function __invoke(AbstractResourceEntityRepresentation $resource, ?string $template = null, array $options = [], bool $isFirst = false): string
     {
         static $isNextCall = false;
 
@@ -51,6 +53,7 @@ class PdfCreator extends AbstractHelper
             'pdfBackend' => 'auto',
             'tempDir' => $tempDir,
             'fontCache' => $tempDir,
+            'skipFallback' => false,
         ];
         $options += $defaultOptions;
 
@@ -85,15 +88,20 @@ class PdfCreator extends AbstractHelper
             'options' => $options,
         ]);
 
-        // When there is output, use the default page.
-        if (!$html && !$isFallbackTemplate) {
-            $isNextCall = false;
-            return $this->__invoke($resource, $fallbackTemplate, [
-                'site' => $site,
-                $resourceName => $resource,
-                'resource' => $resource,
-                'options' => $options,
-            ]);
+        // When there is no output, use the default page.
+        if (!$html) {
+            if (!empty($options['skipFallback'])) {
+                return '';
+            }
+            if (!$isFallbackTemplate) {
+                $isNextCall = false;
+                return $this->__invoke($resource, $fallbackTemplate, [
+                    'site' => $site,
+                    $resourceName => $resource,
+                    'resource' => $resource,
+                    'options' => $options,
+                ]);
+            }
         }
 
         // Fix relative links to application assets, mainly fallback thumbnails.
