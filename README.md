@@ -46,23 +46,29 @@ Usage
 Add the following code somewhere into your theme to get the url of the pdf:
 
 ```php
-echo $this->hyperlink('PDF', $this->url('site/pdf-creator', ['id' => $resource->id()], true));
+echo $this->hyperlink('PDF', $this->url('site/pdf-creator', ['id' => $resource->id()], true), ['target' => '_blank']);
 ```
 
 To pass a specific template, add it to the query:
 
 ```php
-echo $this->hyperlink('PDF', $this->url('site/pdf-creator', ['id' => $resource->id()], ['query' => ['template' => 'record']], true));
+echo $this->hyperlink('PDF', $this->url('site/pdf-creator', ['id' => $resource->id()], ['query' => ['template' => 'record']], true), ['target' => '_blank']);
+```
+
+Note that the url in module Bulk Export is:
+
+```php
+echo $this->hyperlink('PDF', $this->url('site/resource-output-id', ['id' => $resource->id(), 'format' => 'pdf']], true), ['target' => '_blank']);
 ```
 
 The url is something like "https://example.org/s/my-site/pdf/1", where the last
 part is the resource id. If you use BulkExport, the url is the resource one,
 plus ".pdf", as it was a real file.
 
-The template is a phtml file from the theme. The default is "common/template/default.phtml"
-or it shortcut "default". When the template returns nothing, like the default
-template, the template of the resource in the current theme (for example "omeka/site/item/show")
-is used as a fallback.
+The template is a phtml file from the theme. The default is "common/template/record.phtml"
+or it shortcut "record". When the template returns nothing, like the template
+"default", the template of the resource in the current theme (for example "omeka/site/item/show")
+is used as a fallback. Set option "skipFallback" to avoid to use it.
 
 To modify the options, add them to the template "view/pdf-creator/output/show".
 The options are passed to DomPdf and to the template. See all available options
@@ -73,7 +79,7 @@ a template online [here].
 TODO
 ----
 
-- [ ] Make a Bulk Export output (included route).
+- [ ] Include in Bulk Export output (included route) and archive this module.
 
 
 Warning

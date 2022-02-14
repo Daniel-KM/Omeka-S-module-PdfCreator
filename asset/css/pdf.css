@@ -1,4 +1,6 @@
 /**
+ * DomPdf supports css 2.1 and some common features of css 3.
+ *
  * There can be only one folder of fonts (subdirectories are allowed), so you
  * may need to copy them in your own directory and pass the options "fontDir"/"fontCache"
  * to the pdf creator. This is only needed when not-standard fonts are used.
