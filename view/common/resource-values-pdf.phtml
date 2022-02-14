@@ -1,0 +1,62 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation [$item, $itemSet, or $media]
+ * @var array $options
+ * @var array $templateProperties
+ * @var array $values
+ */
+
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+
+$isSiteRequest = $this->status()->isSiteRequest();
+if ($isSiteRequest) {
+    $showLocale = (bool) $this->siteSetting('show_locale_label', true);
+    $filterLocale = $this->siteSetting('filter_locale_values');
+    $lang = $this->lang();
+} else {
+    $showLocale = true;
+    $filterLocale = false;
+    $lang = null;
+}
+
+// Nearly everything, except audio/image/video, iframe, script, etc.
+/** @var array|string $allowedTags */
+include OMEKA_PATH . '/modules/PdfCreator/view/common/allowed-tags.php';
+?>
+
+<?php foreach ($values as $propertyData): ?>
+    <div class="property">
+        <h2><?= $propertyData['alternate_label'] ? $escape($propertyData['alternate_label']) : $escape($translate($propertyData['property']->label())) ?></h2>
+        <div class="values">
+        <?php foreach ($propertyData['values'] as $value): ?>
+            <?php
+            $valueType = $value->type();
+            $valueLang = $value->lang();
+            $class = ['value'];
+            if ('resource' == $valueType || strpos($valueType, 'resource') !== false) {
+                $class[] = 'resource';
+                $class[] = $escape($value->valueResource()->resourceName());
+            } elseif ('uri' == $valueType) {
+                $class[] = 'uri';
+            }
+            ?>
+            <?php if ((!$filterLocale) || ($valueLang == '') || (strcasecmp($valueLang, $lang) == 0)): ?>
+            <div class="<?= implode(' ', $class) ?>" lang="<?= $escape($valueLang) ?>">
+                <?php if ($showLocale && $valueLang): ?>
+                <span class="language"><?= $valueLang ?></span>
+                <?php endif; ?>
+                <span class="value-content"><?= strip_tags($filterLocale ? $value->asHtml($lang) : $value->asHtml(), $allowedTags); ?></span>
+                <?php if(!$value->isPublic()): ?>
+                    <span class="o-icon-private" aria-role="tooltip" title="<?php echo $this->escapeHtml($translate('Private')); ?>" aria-label="<?php echo $this->escapeHtml($translate('Private')); ?>"></span>
+                <?php endif; ?>
+                <?php $this->trigger('view.show.value', ['value' => $value]); ?>
+            </div>
+            <?php endif; ?>
+        <?php endforeach; ?>
+        </div>
+    </div>
+<?php endforeach; ?>

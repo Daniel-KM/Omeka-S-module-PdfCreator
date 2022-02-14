@@ -43,6 +43,10 @@ $this->headLink()
 
 $this->htmlElement('body')->appendAttribute('class', 'resource show');
 
+// Nearly everything, except audio/image/video, iframe, script, etc.
+/** @var array|string $allowedTags */
+include OMEKA_PATH . '/modules/PdfCreator/view/common/allowed-tags.php';
+
 ?>
 <?= $this->doctype() ?>
 <?= $this->htmlElement('html') ?>
@@ -66,7 +70,7 @@ $this->htmlElement('body')->appendAttribute('class', 'resource show');
             <?php endif; ?>
         </header>
         <footer id="footer">
-            <span><?= $escape($this->setting('installation_title', 'Omeka S')) ?></span>
+            <span><?= $escape($siteTitle . ' • ' . $this->setting('installation_title', 'Omeka S')) ?></span>
             <span class="page-number"></span>
         </footer>
 
@@ -77,7 +81,7 @@ $this->htmlElement('body')->appendAttribute('class', 'resource show');
             <?php if ($resource->resourceClass()): ?>
             <div>
                 <h2><?= $translate('Resource class') ?>:</h2>
-                <div class="value-content"><?= $resource->displayResourceClassLabel() ?></div>
+                <div class="value"><?= $translate($resource->displayResourceClassLabel()) ?></div>
             </div>
             <?php endif; ?>
 
@@ -92,7 +96,7 @@ $this->htmlElement('body')->appendAttribute('class', 'resource show');
             </div>
             <?php endif; ?>
 
-            <?= $resource->displayValues(['viewName' => 'common/resource-values']) ?>
+            <?= $resource->displayValues(['viewName' => 'common/resource-values-pdf']) ?>
 
             <?php
             $resourceName = $resource->getControllerName();
@@ -144,9 +148,9 @@ $this->htmlElement('body')->appendAttribute('class', 'resource show');
                 <h3><?= $translate('To quote this record') ?> • <?= date('d/m/Y') ?></h3>
                 <div class="value">
                     <?php $vals = [];
-                    if ($value = $resource->value('dcterms:creator')) $vals[] = $value->asHtml();
+                    if ($value = $resource->value('dcterms:creator')) $vals[] = strip_tags($value->asHtml(), $allowedTags);
                     $vals[] = '« ' . $escape($resource->displayTitle()) . ' »';
-                    if ($value = ($resource->value('dcterms:issued') ?: $resource->value('dcterms:date'))) $vals[] = $value->asHtml();
+                    if ($value = ($resource->value('dcterms:issued') ?: $resource->value('dcterms:date'))) $vals[] = strip_tags($value->asHtml(), $allowedTags);
                     $vals[] = $escape($site->title());
                     ?>
                     <?= implode(', ', array_map('trim', $vals)) ?>
