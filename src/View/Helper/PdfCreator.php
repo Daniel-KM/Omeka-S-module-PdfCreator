@@ -17,7 +17,7 @@ class PdfCreator extends AbstractHelper
     /**
      * The default partial view script.
      */
-    const PARTIAL_NAME = 'common/template/default';
+    const PARTIAL_NAME = 'common/template/record';
 
     /**
      * Render a resource as pdf (format A4 portrait by default).
@@ -27,10 +27,10 @@ class PdfCreator extends AbstractHelper
      *
      * @var AbstractResourceEntityRepresentation $resource
      * @var string $template The template to render. If it is a simple name
-     *   ("default"), it should be inside "common/template".
+     *   ("record"), it should be inside "common/template".
      *   When the output from the template is empty, the default template of
      *   the resource in the current theme (for example "omeka/site/item/show")
-     *   is used as a fallback.
+     *   is used as a fallback. You can force it with template "default" too.
      * @var array $options Options passed to Dompdf and to the template.
      *   See all available options here in the documentation of DomPdf.
      *   A specific option for the module is "skipFallback", false by default.
