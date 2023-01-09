@@ -46,7 +46,10 @@ Usage
 Add the following code somewhere into your theme to get the url of the pdf:
 
 ```php
+# Resource.
 echo $this->hyperlink('PDF', $this->url('site/pdf-creator', ['id' => $resource->id()], true), ['target' => '_blank']);
+# Site page.
+echo $this->hyperlink('PDF', $this->url('site/pdf-creator', ['id' => $page->slug()], true), ['target' => '_blank']);
 ```
 
 To pass a specific template, add it to the query:
@@ -136,7 +139,7 @@ of the CeCILL license and that you accept its terms.
 Copyright
 ---------
 
-* Copyright Daniel Berthereau, 2017-2022 (see [Daniel-KM] on GitLab)
+* Copyright Daniel Berthereau, 2017-2023 (see [Daniel-KM] on GitLab)
 
 See included libraries for copyright of dependencies.
 
