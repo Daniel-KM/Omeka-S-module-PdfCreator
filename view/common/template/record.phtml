@@ -45,10 +45,6 @@ $this->headLink()
 
 $this->htmlElement('body')->appendAttribute('class', 'resource show');
 
-// Nearly everything, except audio/image/video, iframe, script, etc.
-/** @var array|string $allowedTags */
-include OMEKA_PATH . '/modules/PdfCreator/view/common/allowed-tags.php';
-
 ?>
 <?= $this->doctype() ?>
 <?= $this->htmlElement('html') ?>
@@ -150,9 +146,9 @@ include OMEKA_PATH . '/modules/PdfCreator/view/common/allowed-tags.php';
                 <h3><?= $translate('To quote this record') ?> • <?= date('d/m/Y') ?></h3>
                 <div class="value">
                     <?php $vals = [];
-                    if ($value = $resource->value('dcterms:creator')) $vals[] = strip_tags($value->asHtml(), $allowedTags);
+                    if ($value = $resource->value('dcterms:creator')) $vals[] = strip_tags($value->asHtml());
                     $vals[] = '« ' . $escape($resource->displayTitle()) . ' »';
-                    if ($value = ($resource->value('dcterms:issued') ?: $resource->value('dcterms:date'))) $vals[] = strip_tags($value->asHtml(), $allowedTags);
+                    if ($value = ($resource->value('dcterms:issued') ?: $resource->value('dcterms:date'))) $vals[] = strip_tags($value->asHtml());
                     $vals[] = $escape($site->title());
                     ?>
                     <?= implode(', ', array_map('trim', $vals)) ?>

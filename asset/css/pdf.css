@@ -173,7 +173,8 @@ img {
 }
 
 .resource-link {
-    display: inline-block;
+    /* display: inline-flex; */
+    display: inline;
     max-width: 100%;
     min-width: 0;
 }
@@ -181,7 +182,11 @@ img {
 .resource-link img {
     height: 2cm;
     margin-top: 0.5cm;
-    margin-right: 0.5cm;
+    margin-right: 0.3cm;
+}
+
+.resource-name {
+    font-size: inherit;
 }
 
 .language {
